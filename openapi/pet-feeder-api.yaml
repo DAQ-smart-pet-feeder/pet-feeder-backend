@@ -20,6 +20,37 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SensorRoomData'
+  /behavior:
+    get:
+      summary: Returns a list of behavior data that collect status which is the number and frequency value.
+      operationId: controller.get_behavior_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BehaviorData'   
+  /record/{por}:
+    parameters:
+      - name: por
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Receive the portion data from the path and insert it into the database.
+      operationId: controller.post_portion_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedingData'
+                                
 
 components:
   schemas:
@@ -33,6 +64,27 @@ components:
         dis:
           type: number
           description: distance between sensor and object 
+        por:
+          type: integer
+          description: food portion
+    BehaviorData:
+      type: object
+      properties:
+        id:
+          type: integer
+        ts:
+          type: string
+        status:
+          type: integer
+        freq:
+          type: integer
+    FeedingData:
+      type: object
+      properties:
+        id:
+          type: integer
+        ts:
+          type: string
         por:
           type: integer
           description: food portion

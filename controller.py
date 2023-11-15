@@ -36,10 +36,11 @@ def get_sensor_tank_data():
 def get_behavior_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-            SELECT ts, status, freq
+            SELECT status, freq
             FROM behaviorData
         """)
-        result = [models.BehaviorData(*row) for row in cs.fetchall()]
+        result = [{'stat': bool(row[0]), 'freq': int(row[1])} for row in cs.fetchall()]
+        print(result)
         return result
     
 def get_feeding_data():
@@ -54,7 +55,7 @@ def get_feeding_data():
 def get_feeding_details(id):
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-            SELECT ts, dis, por
+            SELECT ts, por
             FROM feedingData
             WHERE id=%s
             """, [id])
@@ -63,4 +64,21 @@ def get_feeding_details(id):
         return models.FeedingData(*result)
     else:
         abort(404)
+
+def post_portion_data(por):
+    with pool.connection() as conn, conn.cursor() as cs:
+        print(por)
+    #     sql_query = """
+    #         INSERT INTO feedingData (por) VALUES (?)
+    #     """
+    #     print(f"SQL Query: {sql_query}")
+    #     cs.execute(sql_query, (por,))
+    #     conn.commit()
+
+    # response_data = {'message': 'Data inserted successfully'}
+    # return response_data
+
+
+
+
 
