@@ -1,0 +1,38 @@
+openapi: 3.0.0
+info:
+  title: Smart Pet Feeder API
+  description:
+    TBA
+  version: 3.0.0
+servers:
+  - url: http://127.0.0.1:8080/pet-feeder-api/v3
+paths:
+  /roomdata:
+    get:
+      summary: Returns a list of room data.
+      operationId: controller.get_sensor_room_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorRoomData'
+
+components:
+  schemas:
+    SensorRoomData:
+      type: object
+      properties:
+        id:
+          type: integer
+        ts:
+          type: string
+        dis:
+          type: number
+          description: distance between sensor and object 
+        por:
+          type: integer
+          description: food portion
