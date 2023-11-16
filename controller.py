@@ -1,5 +1,5 @@
 import sys
-from flask import abort
+from flask import abort, request
 import pymysql
 from dbutils.pooled_db import PooledDB
 from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
@@ -65,20 +65,26 @@ def get_feeding_details(id):
     else:
         abort(404)
 
-def post_portion_data(por):
+def post_portion_data():
+    try:
+        with pool.connection() as conn, conn.cursor() as cs:
+            request_data = request.get_json() 
+        # Example: Insert data into a 'feedingData'
+            insert_query = "INSERT INTO feedingData (por) VALUES (%s)"
+            cs.execute(insert_query, (request_data['por']))
+
+        # Commit changes and close the database connection
+            conn.commit()
+        # Return success message or relevant data
+        return {'message': 'Data inserted successfully'}, 201
+
+    except Exception as e:
+        # Handle errors appropriately
+        print(f"Error: {e}")
+        return {'error': 'Internal Server Error'}, 500
+    
+
+def post_time_data():
     with pool.connection() as conn, conn.cursor() as cs:
-        print(por)
-    #     sql_query = """
-    #         INSERT INTO feedingData (por) VALUES (?)
-    #     """
-    #     print(f"SQL Query: {sql_query}")
-    #     cs.execute(sql_query, (por,))
-    #     conn.commit()
-
-    # response_data = {'message': 'Data inserted successfully'}
-    # return response_data
-
-
-
-
-
+        request_data = request.get_json() 
+        print(request_data)

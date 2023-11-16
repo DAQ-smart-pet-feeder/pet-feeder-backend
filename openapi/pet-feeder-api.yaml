@@ -33,23 +33,56 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BehaviorData'   
-  /record/{por}:
-    parameters:
-      - name: por
-        in: path
-        required: true
-        schema:
-          type: integer
+  /record:
     post:
-      summary: Receive the portion data from the path and insert it into the database.
+      summary: Create a new resource
       operationId: controller.post_portion_data
+      requestBody:
+        description: Data to be sent in the request body
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                por:
+                  type: integer
       responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FeedingData'
+        '201':
+          description: Resource created successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /time:
+    post:
+      summary: Create a new resource
+      operationId: controller.post_time_data
+      requestBody:
+        description: Data to be sent in the request body
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  days:
+                    type: array
+                    items:
+                      type: string
+                  time:
+                    type: string
+                  por:
+                    type: integer
+
+                
+      responses:
+        '201':
+          description: Resource created successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
                                 
 
 components:
