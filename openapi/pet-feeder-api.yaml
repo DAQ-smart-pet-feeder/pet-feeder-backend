@@ -20,6 +20,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SensorRoomData'
+  /data:
+    get:
+      summary: Return a list of room data combine with tank data.
+      operationId: controller.get_room_and_tank_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomAndTankData'
 
 components:
   schemas:
@@ -36,3 +49,22 @@ components:
         por:
           type: integer
           description: food portion
+    RoomAndTankData:
+      type: object
+      properties:
+        room_temp: 
+          type: number
+          format: float
+          description: temperature inside the room
+        room_hum:
+          type: number
+          format: float
+          description: humidity inside the room
+        tank_temp:
+          type: number
+          format: float
+          description: temperature inside the tank
+        tank_hum:
+          type: number
+          format: float
+          description: humidity inside the tank
