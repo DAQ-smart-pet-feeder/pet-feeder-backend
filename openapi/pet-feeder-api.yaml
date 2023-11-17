@@ -85,6 +85,10 @@ paths:
                       type: string
                   schedule_id:
                       type: integer
+                  time:
+                    type: string
+                  por:
+                    type: integer
                   enable_status:
                     type: integer
       responses:

@@ -62,7 +62,6 @@ def get_behavior_data():
             FROM behaviorData
         """)
         result = [{'stat': int(row[0]), 'freq': int(row[1]), 'ts': str(row[2])} for row in cs.fetchall()]
-        print(result)
         return result
 
 def get_meal_plan_data():
@@ -78,7 +77,6 @@ def get_meal_plan_data():
                       'enable_status': int(row[4])} for row in cs.fetchall()]
         if not data_list:
             return None
-        print(data_list)
         return data_list
 
 def post_portion_data():
