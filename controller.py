@@ -7,6 +7,7 @@ from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
 sys.path.append(OPENAPI_STUB_DIR)
 from swagger_server import models
 
+
 pool = PooledDB(creator=pymysql,
                 host=DB_HOST,
                 user=DB_USER,
@@ -14,6 +15,7 @@ pool = PooledDB(creator=pymysql,
                 database=DB_NAME,
                 maxconnections=1,
                 blocking=True)
+
 
 def get_sensor_room_data():
     with pool.connection() as conn, conn.cursor() as cs:
@@ -23,7 +25,8 @@ def get_sensor_room_data():
         """)
         result = [models.SensorRoomData(*row) for row in cs.fetchall()]
         return result
-    
+
+
 def get_sensor_tank_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
@@ -32,7 +35,8 @@ def get_sensor_tank_data():
         """)
         result = [models.SensorTankData(*row) for row in cs.fetchall()]
         return result
-    
+
+   
 def get_feeding_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
@@ -41,6 +45,7 @@ def get_feeding_data():
         """)
         result = [models.FeedingData(*row) for row in cs.fetchall()]
         return result
+
 
 def get_feeding_details(id):
     with pool.connection() as conn, conn.cursor() as cs:
@@ -55,6 +60,7 @@ def get_feeding_details(id):
     else:
         abort(404)
 
+
 def get_behavior_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
@@ -63,6 +69,7 @@ def get_behavior_data():
         """)
         result = [{'stat': int(row[0]), 'freq': int(row[1]), 'ts': str(row[2])} for row in cs.fetchall()]
         return result
+
 
 def get_meal_plan_data():
     with pool.connection() as conn, conn.cursor() as cs:
@@ -78,6 +85,7 @@ def get_meal_plan_data():
         if not data_list:
             return None
         return data_list
+
 
 def post_portion_data():
     try:
@@ -96,6 +104,7 @@ def post_portion_data():
         # Handle errors appropriately
         print(f"Error: {e}")
         return {'error': 'Internal Server Error'}, 500
+
 
 def post_meal_plan_data():
     try:
@@ -139,3 +148,40 @@ def post_meal_plan_data():
         # Handle errors appropriately
         print(f"Error: {e}")
         return {'error': 'Internal Server Error'}, 500
+
+
+def get_room_tank_env_data():
+    room_data = get_sensor_room_data()
+    tank_data = get_sensor_tank_data()
+    env_data = get_env_data()
+    return [models.RoomTankEnvData(room_data[1], room_data[2], room_data[3], tank_data[1], tank_data[2], env_data[1], env_data[2], env_data[3])]
+
+
+def get_sensor_room_data():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT ts, temp, hum, pm FROM sensorRoomData
+            ORDER BY id DESC LIMIT 1
+        """)
+        result = [row for row in cs.fetchall()]
+        return result[0]
+
+
+def get_sensor_tank_data():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT ts, temp, hum FROM sensorTankData
+            ORDER BY id DESC LIMIT 1
+        """)
+        result = [row for row in cs.fetchall()]
+        return result[0]
+
+
+def get_env_data():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT ts, temp, hum, pm FROM envData
+            ORDER BY id DESC LIMIT 1
+        """)
+        result = [row for row in cs.fetchall()]
+        return result[0]

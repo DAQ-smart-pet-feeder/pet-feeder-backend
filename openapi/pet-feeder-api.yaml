@@ -98,7 +98,19 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-                                
+  /data:
+    get:
+      summary: Receive the data of room, tank, and env data
+      operationId: controller.get_room_tank_env_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomTankEnvData'
 
 components:
   schemas:
@@ -154,3 +166,30 @@ components:
           description: The 'time' value
         enable_status:
           type: integer      
+    RoomTankEnvData:
+      type: object
+      properties:
+        room_temp:
+          type: number
+          description: Temperature inside the room
+        room_hum:
+          type: number
+          description: Humidity inside the room
+        room_pm:
+          type: integer
+          description: PM2.5 inside the room
+        tank_temp:
+          type: number
+          description: Temperature inside tank
+        tank_hum:
+          type: number
+          description: Humidity inside tank
+        env_temp:
+          type: number
+          description: Temperature from environment
+        env_hum:
+          type: number
+          description: Humidity from environment
+        env_pm:
+          type: integer
+          description: PM2.5 from environment
