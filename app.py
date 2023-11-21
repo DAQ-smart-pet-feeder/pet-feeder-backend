@@ -1,5 +1,9 @@
 import sys
 import os
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
 
 if not os.path.exists("config.py"):
     print("Configuration 'config.py' not found.  "
@@ -32,7 +36,10 @@ def main():
                 arguments={'title': 'Smart Pet Feeder API'},
                 pythonic_params=True)
 
+    CORS(app.app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
     app.run(port=8080, debug=True)
+
 
 if __name__ == '__main__':
     main()

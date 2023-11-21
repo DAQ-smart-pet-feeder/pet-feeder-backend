@@ -29,6 +29,10 @@ OpenAPI Generator and Put them inside stub folder
 pip install -r requirements.txt
 python -m swagger_server
 python app.py
+```
+
+In another terminal,
+```
 openapi-to-graphql openapi/pet-feeder-api.yaml
 ```
 
