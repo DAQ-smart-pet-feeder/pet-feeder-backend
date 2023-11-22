@@ -1,5 +1,4 @@
 -r stub/requirements.txt
 DBUtils
 PyMySQL
-connexion<3.0.0
 Flask-Cors==4.0.0
