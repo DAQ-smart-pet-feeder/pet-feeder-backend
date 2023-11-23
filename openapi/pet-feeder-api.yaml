@@ -33,6 +33,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BehaviorData'
+  /get-feeding-history:
+    get:
+      summary: Returns a list of behavior data that contains timestamp, frequency and status.
+      operationId: controller.get_feeding_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedingData'
   /get-meal-plan-data:
     get:
       summary: Get list of all meal plan data
@@ -59,6 +72,29 @@ paths:
               type: object
               properties:
                 por:
+                  type: integer
+      responses:
+        '201':
+          description: Resource created successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /post-tank-data:
+    post:
+      summary: Receive the data which are feeding_status and remaining_percentage
+      operationId: controller.post_tank_data
+      requestBody:
+        description: Data to be sent in the request body
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                remaining_percentage:
+                  type: integer
+                feeding_status:
                   type: integer
       responses:
         '201':
@@ -98,6 +134,19 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /get-tank-data:
+    get:
+      summary: send feeding_status and remaining_percentage
+      operationId: controller.get_tank_data
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TankData'
   /data:
     get:
       summary: Receive the data of room, tank, and env data
@@ -114,6 +163,15 @@ paths:
 
 components:
   schemas:
+    TankData:
+      type: object
+      properties:
+        id:
+          type: integer
+        remaining_percentage:
+          type: integer
+        feeding_status:
+          type: integer
     SensorRoomData:
       type: object
       properties:
