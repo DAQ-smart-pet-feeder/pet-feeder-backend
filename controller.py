@@ -6,7 +6,41 @@ from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
 
 sys.path.append(OPENAPI_STUB_DIR)
 from swagger_server import models
+import paho.mqtt.client as mqtt
+import logging
 
+# Setup logging
+logging.basicConfig(level=logging.DEBUG)
+
+# MQTT Parameters
+MQTT_BROKER = "iot.cpe.ku.ac.th"
+MQTT_USER = "b6410546203"
+MQTT_PASS = "preawpan.t@ku.th"
+
+# Initialize client
+client = mqtt.Client(client_id="")  # use a unique client ID
+
+# Set credentials
+client.username_pw_set(MQTT_USER, MQTT_PASS)
+
+# Callbacks
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected successfully.")
+    else:
+        print(f"Failed to connect, return code {rc}")
+
+def on_disconnect(client, userdata, rc):
+    print("Disconnected")
+
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
+
+# Connect
+try:
+    client.connect(MQTT_BROKER, 1883, 60)  # You can specify the port if it's not the default
+except Exception as e:
+    print(f"Error connecting to MQTT Broker: {e}")
 
 pool = PooledDB(creator=pymysql,
                 host=DB_HOST,
@@ -95,6 +129,7 @@ def post_portion_data():
         # Commit changes and close the database connection
             conn.commit()
         # Return success message or relevant data
+        client.publish('daq2023/group4/banana', request_data['por'])
         return {'message': 'Data inserted successfully'}, 201
 
     except Exception as e:
