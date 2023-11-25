@@ -1,6 +1,7 @@
 import sys
 from flask import abort, request
 import pymysql
+import json
 from dbutils.pooled_db import PooledDB
 from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
 
@@ -47,7 +48,7 @@ pool = PooledDB(creator=pymysql,
                 user=DB_USER,
                 password=DB_PASSWD,
                 database=DB_NAME,
-                maxconnections=1,
+                maxconnections=2,
                 blocking=True)
 
 
@@ -117,7 +118,6 @@ def get_meal_plan_data():
             return None
         return data_list
 
-
 def post_portion_data():
     try:
         with pool.connection() as conn, conn.cursor() as cs:
@@ -129,7 +129,7 @@ def post_portion_data():
         # Commit changes and close the database connection
             conn.commit()
         # Return success message or relevant data
-        client.publish('daq2023/group4/banana', request_data['por'])
+        client.publish('daq2023/group4/quick_meal', request_data['por'])
         return {'message': 'Data inserted successfully'}, 201
 
     except Exception as e:
@@ -156,11 +156,12 @@ def post_tank_data():
         print(f"Error: {e}")
         return {'error': 'Internal Server Error'}, 500
 
-
 def post_meal_plan_data():
     try:
         with pool.connection() as conn, conn.cursor() as cs:
+
             input_data = request.get_json() 
+            print(1)
             transformed_data = []
 
             # Check if schedule_id already exists in the database
@@ -184,13 +185,14 @@ def post_meal_plan_data():
                         'enable_status': input_data['enable_status']
                     }
                 transformed_data.append(transformed_entry)
-
+                print(2)
                 # Execute the query for each transformed entry
                 for transformed_entry in transformed_data:
                     cs.execute(insert_query, (transformed_entry['schedule_id'], transformed_entry['days'], transformed_entry['por'], transformed_entry['time'], transformed_entry['enable_status']))
-
             # Commit changes after all queries have been executed
             conn.commit()
+            meal_plan = json.dumps(get_meal_plan_data())
+            client.publish('daq2023/group4/meal_plan', meal_plan)
 
             # Return success message or relevant data
             return {'message': 'Data inserted or updated successfully'}, 201
