@@ -61,10 +61,10 @@ def get_feeding_data():
 def get_behavior_data():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-            SELECT status, freq, ts
+            SELECT status, ts
             FROM behaviorData
         """)
-        result = [{'stat': int(row[0]), 'freq': int(row[1]), 'ts': str(row[2])} for row in cs.fetchall()]
+        result = [{'stat': int(row[0]), 'ts': str(row[1])} for row in cs.fetchall()]
         return result
 
 

@@ -22,7 +22,7 @@ paths:
                   $ref: '#/components/schemas/SensorRoomData'
   /get-behavior-data:
     get:
-      summary: Returns a list of behavior data that contains timestamp, frequency and status.
+      summary: Returns a list of behavior data that contains timestamp and status.
       operationId: controller.get_behavior_data
       responses:
         200:
@@ -35,7 +35,7 @@ paths:
                   $ref: '#/components/schemas/BehaviorData'
   /get-feeding-history:
     get:
-      summary: Returns a list of behavior data that contains timestamp, frequency and status.
+      summary: Returns a list of behavior data that contains timestamp and status.
       operationId: controller.get_feeding_data
       responses:
         200:
@@ -193,8 +193,6 @@ components:
         ts:
           type: string
         status:
-          type: integer
-        freq:
           type: integer
     FeedingData:
       type: object
