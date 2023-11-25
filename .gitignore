@@ -8,6 +8,7 @@ htmlcov/*
 *.swp
 config.py
 env/
+venv/
 stub/
 *-sol.*
 ve
