@@ -208,66 +208,66 @@ paths:
                       type: number
                     temp_max:
                       type: number
-  # /visual/pm25:
-  #   get:
-  #     summary: Receive pm25 and eating time of each day
-  #     operationId: controller.get_pm25_and_eating_time
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 type: object
-  #                 properties:
-  #                   pm25:
-  #                     type: integer
-  #                   eating_time:
-  #                     type: array
-  #                     items:
-  #                       type: integer
-  # /visual/temp:
-  #   get:
-  #     summary: Receive temperature and eating time of each day
-  #     operationId: controller.get_temp_and_eating_time
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 type: object
-  #                 properties:
-  #                   temp:
-  #                     type: number
-  #                   eating_time:
-  #                     type: array
-  #                     items:
-  #                       type: integer
-  # /visual/hum:
-  #   get:
-  #     summary: Receive humidity and eating time of each day
-  #     operationId: controller.get_humudity_and_eating_time
-  #     responses:
-  #       200:
-  #         description: Success
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 type: object
-  #                 properties:
-  #                   hum:
-  #                     type: integer
-  #                   eating_time:
-  #                     type: array
-  #                     items:
-  #                       type: integer
+  /visual/pm25:
+    get:
+      summary: Receive pm25 and eating time of each day
+      operationId: controller.get_pm25_and_eating_time
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    pm25:
+                      type: integer
+                    eating_time:
+                      type: array
+                      items:
+                        type: integer
+  /visual/temp:
+    get:
+      summary: Receive temperature and eating time of each day
+      operationId: controller.get_temp_and_eating_time
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    temp:
+                      type: number
+                    eating_time:
+                      type: array
+                      items:
+                        type: integer
+  /visual/hum:
+    get:
+      summary: Receive humidity and eating time of each day
+      operationId: controller.get_hum_and_eating_time
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    hum:
+                      type: integer
+                    eating_time:
+                      type: array
+                      items:
+                        type: integer
 
 components:
   schemas:
