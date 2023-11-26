@@ -160,6 +160,114 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RoomTankEnvData'
+  /visual/room-data:
+    get:
+      summary: Receive maximum and minimum of temperature and PM of each day from room data and receive average of humidity from room data of each day
+      operationId: controller.get_room_data_for_visualization
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                    hum_avg:
+                      type: number
+                    temp_min:
+                      type: number
+                    temp_max:
+                      type: number
+                    pm_min:
+                      type: number
+                    pm_max:
+                      type: number
+  /visual/food-tank-data:
+    get:
+      summary: Receive maximum and minimum of temperature and average of humidity of each day
+      operationId: controller.get_tank_data_for_visualization
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 type: object
+                 properties:
+                    date:
+                      type: string
+                    hum_avg:
+                      type: number
+                    temp_min:
+                      type: number
+                    temp_max:
+                      type: number
+  /visual/pm25:
+    get:
+      summary: Receive pm25 and eating time of each day
+      operationId: controller.get_pm25_and_eating_time
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    pm25:
+                      type: integer
+                    eating_time:
+                      type: array
+                      items:
+                        type: integer
+  /visual/temp:
+    get:
+      summary: Receive temperature and eating time of each day
+      operationId: controller.get_temp_and_eating_time
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    temp:
+                      type: number
+                    eating_time:
+                      type: array
+                      items:
+                        type: integer
+  /visual/hum:
+    get:
+      summary: Receive humidity and eating time of each day
+      operationId: controller.get_hum_and_eating_time
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    hum:
+                      type: integer
+                    eating_time:
+                      type: array
+                      items:
+                        type: integer
 
 components:
   schemas:

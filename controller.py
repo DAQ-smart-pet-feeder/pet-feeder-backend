@@ -238,3 +238,94 @@ def get_env_data():
         """)
         result = [row for row in cs.fetchall()]
         return result[0]
+
+
+def get_room_data_for_visualization():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT DATE(ts), AVG(hum) AS hum_avg, MIN(temp) AS temp_min, 
+            MAX(temp) AS temp_max, MIN(pm) AS pm_min, MAX(pm) AS pm_max 
+            FROM sensorRoomData
+            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 7 DAY AND CURRENT_DATE()
+            GROUP BY DATE(ts)
+        """)
+        result = [{
+            "date": row[0],
+            "hum_avg": row[1],
+            "temp_min": row[2],
+            "temp_max": row[3],
+            "pm_min": row[4],
+            "pm_max": row[5]
+        } for row in cs.fetchall()]
+        return result if result else None
+
+
+def get_tank_data_for_visualization():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT DATE(ts), AVG(hum), MIN(temp) AS temp_min, MAX(temp) AS temp_max
+            FROM sensorTankData
+            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 7 DAY AND CURRENT_DATE()
+            GROUP BY DATE(ts)
+        """)
+        result = [
+            {
+                "date": row[0],
+                "hum_avg": row[1],
+                "temp_min": row[2],
+                "temp_max": row[3],
+            }
+            for row in cs.fetchall()
+        ]
+        return result if result else None
+
+
+def get_pm25_and_eating_time():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT pm25, GROUP_CONCAT(eating_time ORDER BY eating_time)
+            FROM dataVisual
+            GROUP BY pm25
+        """)
+        result = [
+            {
+                "pm25": row[0],
+                "eating_time": eval(row[1])
+            }
+            for row in cs.fetchall()
+        ]
+        return result if result else None
+
+
+def get_temp_and_eating_time():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT temp, GROUP_CONCAT(eating_time ORDER BY eating_time)
+            FROM dataVisual
+            GROUP BY temp
+        """)
+        result = [
+            {
+                "temp": row[0],
+                "eating_time": eval(row[1])
+            }
+            for row in cs.fetchall()
+        ]
+        return result if result else None
+
+
+def get_hum_and_eating_time():
+    with pool.connection() as conn, conn.cursor() as cs:
+        cs.execute("""
+            SELECT hum, GROUP_CONCAT(eating_time ORDER BY eating_time)
+            FROM dataVisual
+            GROUP BY hum
+        """)
+        result = [
+            {
+                "hum": row[0],
+                "eating_time": eval(row[1])
+            }
+            for row in cs.fetchall()
+        ]
+        return result if result else None
