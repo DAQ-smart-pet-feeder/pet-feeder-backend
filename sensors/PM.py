@@ -26,13 +26,9 @@ class PMS7003:
     PMS_CHECKSUM = 15
 
 
-
-
     def __init__(self, uart):
         """Create a wrapper over the specified UART instance, uart"""
         self.uart = uart
-
-
 
 
     def read(self):
@@ -127,7 +123,5 @@ class PMS7003:
 uart = UART(1, rx=23, tx=18, baudrate=9600)
 pms = PMS7003(uart)
 
-while(True):
-    pms_read = pms.read()
-    print(f"PM2.5: {pms_read['PM2_5']}")
-
+def get_pm():
+    return pms.read()['PM2_5']

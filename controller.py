@@ -1,19 +1,54 @@
 import sys
 from flask import abort, request
 import pymysql
+import json
 from dbutils.pooled_db import PooledDB
 from config import OPENAPI_STUB_DIR, DB_HOST, DB_USER, DB_PASSWD, DB_NAME
 
 sys.path.append(OPENAPI_STUB_DIR)
 from swagger_server import models
+import paho.mqtt.client as mqtt
+import logging
 
+# Setup logging
+logging.basicConfig(level=logging.DEBUG)
+
+# MQTT Parameters
+MQTT_BROKER = "iot.cpe.ku.ac.th"
+MQTT_USER = "b6410546203"
+MQTT_PASS = "preawpan.t@ku.th"
+
+# Initialize client
+client = mqtt.Client(client_id="")  # use a unique client ID
+
+# Set credentials
+client.username_pw_set(MQTT_USER, MQTT_PASS)
+
+# Callbacks
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected successfully.")
+    else:
+        print(f"Failed to connect, return code {rc}")
+
+def on_disconnect(client, userdata, rc):
+    print("Disconnected")
+
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
+
+# Connect
+try:
+    client.connect(MQTT_BROKER, 1883, 60)  # You can specify the port if it's not the default
+except Exception as e:
+    print(f"Error connecting to MQTT Broker: {e}")
 
 pool = PooledDB(creator=pymysql,
                 host=DB_HOST,
                 user=DB_USER,
                 password=DB_PASSWD,
                 database=DB_NAME,
-                maxconnections=1,
+                maxconnections=2,
                 blocking=True)
 
 
@@ -83,7 +118,6 @@ def get_meal_plan_data():
             return None
         return data_list
 
-
 def post_portion_data():
     try:
         with pool.connection() as conn, conn.cursor() as cs:
@@ -95,6 +129,7 @@ def post_portion_data():
         # Commit changes and close the database connection
             conn.commit()
         # Return success message or relevant data
+        client.publish('daq2023/group4/quick_meal', request_data['por'])
         return {'message': 'Data inserted successfully'}, 201
 
     except Exception as e:
@@ -121,11 +156,12 @@ def post_tank_data():
         print(f"Error: {e}")
         return {'error': 'Internal Server Error'}, 500
 
-
 def post_meal_plan_data():
     try:
         with pool.connection() as conn, conn.cursor() as cs:
+
             input_data = request.get_json() 
+            print(1)
             transformed_data = []
 
             # Check if schedule_id already exists in the database
@@ -149,13 +185,14 @@ def post_meal_plan_data():
                         'enable_status': input_data['enable_status']
                     }
                 transformed_data.append(transformed_entry)
-
+                print(2)
                 # Execute the query for each transformed entry
                 for transformed_entry in transformed_data:
                     cs.execute(insert_query, (transformed_entry['schedule_id'], transformed_entry['days'], transformed_entry['por'], transformed_entry['time'], transformed_entry['enable_status']))
-
             # Commit changes after all queries have been executed
             conn.commit()
+            meal_plan = json.dumps(get_meal_plan_data())
+            client.publish('daq2023/group4/meal_plan', meal_plan)
 
             # Return success message or relevant data
             return {'message': 'Data inserted or updated successfully'}, 201
@@ -201,7 +238,7 @@ def get_env_data():
         """)
         result = [row for row in cs.fetchall()]
         return result[0]
-    
+
 
 def get_room_data_for_visualization():
     with pool.connection() as conn, conn.cursor() as cs:
