@@ -15,7 +15,9 @@ from behavior import is_something_block
 from temp_hum import get_sensor_data
 from lamp import get_lamp
 import ntptime
+from uasyncio import Lock
 
+lamp_lock = Lock()
 
 led_wifi = Pin(2, Pin.OUT)
 led_wifi.value(1)  # turn the red led off
@@ -34,6 +36,7 @@ WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
 print(time.gmtime())
 
 meal_schedules = []
+
 
 
 def connect_anything():
@@ -60,16 +63,21 @@ connect_anything()
 lamp = Pin(25, Pin.OUT)
 lamp.value(1)  # turn USB lamp off initially
 
+async def control_lamp(state):
+    async with lamp_lock:
+        # Change the state of the lamp
+        lamp.value(state)
+        # Additional code if needed
 
 
-
-def feed_for(sec):
-    lamp.value(0)
+async def feed_for(sec):
+#     lamp.value(0)
+    await control_lamp(0)
     for n in range(sec, 0, -1):
         print(f'feeding for {n} seconds')
-        time.sleep(1)
-    lamp.value(1) # turn lamp off
-    print('feed finished')
+        await asyncio.sleep(1)
+#     lamp.value(1) # turn lamp off
+    await control_lamp(1)
 
 def quick_meal_callback(payload):
     print(payload)
@@ -77,7 +85,7 @@ def quick_meal_callback(payload):
     if por <= 0:
         print('payload received with value less than 0')
         return
-    feed_for(por)
+    asyncio.create_task(feed_for(por))
 
 
 def get_current_day():
@@ -178,7 +186,7 @@ async def publish_tank_data():
 async def publish_remaining_percent():
     while True:
         sensor_tank_payload = {
-            "rem_percent": round(find_distance() / FOOD_CONTAINER_AMOUNT * 100, 2),
+            "rem_percent": round((FOOD_CONTAINER_AMOUNT - find_distance()) / FOOD_CONTAINER_AMOUNT * 100, 2),
             "feed_status": 1 - lamp.value()
             }
         print('published: ', sensor_tank_payload)
