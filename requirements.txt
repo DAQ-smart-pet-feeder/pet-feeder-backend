@@ -3,3 +3,4 @@ DBUtils
 PyMySQL
 Flask-Cors==4.0.0
 paho-mqtt
+connexion<3.0.0
