@@ -35,7 +35,7 @@ paths:
                   $ref: '#/components/schemas/BehaviorData'
   /get-feeding-history:
     get:
-      summary: Returns a list of behavior data that contains timestamp and status.
+      summary: Returns a list of behavior data that contains id, timestamp and status.
       operationId: controller.get_feeding_data
       responses:
         200:
@@ -136,7 +136,7 @@ paths:
           description: Internal server error
   /get-tank-data:
     get:
-      summary: send feeding_status and remaining_percentage
+      summary: Send feeding_status and remaining_percentage.
       operationId: controller.get_tank_data
       responses:
         200:
@@ -162,7 +162,7 @@ paths:
                   $ref: '#/components/schemas/RoomTankEnvData'
   /visual/room-data:
     get:
-      summary: Receive maximum and minimum of temperature and PM of each day from room data and receive average of humidity from room data of each day
+      summary: Receive maximum and minimum of temperature and PM of 7 days from room data and receive average of humidity from room data of each day
       operationId: controller.get_room_data_for_visualization
       responses:
         200:
@@ -188,7 +188,7 @@ paths:
                       type: number
   /visual/food-tank-data:
     get:
-      summary: Receive maximum and minimum of temperature and average of humidity of each day
+      summary: Receive maximum and minimum of temperature and average of humidity of 7 days
       operationId: controller.get_tank_data_for_visualization
       responses:
         200:
@@ -210,7 +210,7 @@ paths:
                       type: number
   /visual/pm25:
     get:
-      summary: Receive pm25 and eating time of each day
+      summary: Receive pm25 and eating time of 7 days
       operationId: controller.get_pm25_and_eating_time
       responses:
         200:
@@ -250,7 +250,7 @@ paths:
                         type: integer
   /visual/hum:
     get:
-      summary: Receive humidity and eating time of each day
+      summary: Receive humidity and eating time of 7 days
       operationId: controller.get_hum_and_eating_time
       responses:
         200:
