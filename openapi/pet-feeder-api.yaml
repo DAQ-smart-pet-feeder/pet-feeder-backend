@@ -162,7 +162,7 @@ paths:
                   $ref: '#/components/schemas/RoomTankEnvData'
   /visual/room-data:
     get:
-      summary: Receive maximum and minimum of temperature and PM of 7 days from room data and receive average of humidity from room data of each day
+      summary: Receive maximum and minimum of temperature and PM of 7 days from room data and receive average of humidity from room data of 7 days
       operationId: controller.get_room_data_for_visualization
       responses:
         200:
@@ -230,7 +230,7 @@ paths:
                         type: integer
   /visual/temp:
     get:
-      summary: Receive temperature and eating time of each day
+      summary: Receive temperature and eating time of 7 days
       operationId: controller.get_temp_and_eating_time
       responses:
         200:
