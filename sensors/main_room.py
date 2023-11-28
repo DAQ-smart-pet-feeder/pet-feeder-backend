@@ -46,23 +46,30 @@ def connect_anything():
 
 connect_anything()
 
-
-
+def disconnect_mqtt():
+    try:
+        mqtt.disconnect()
+        print("Disconnected from MQTT broker")
+    except Exception as e:
+        print("Error disconnecting from MQTT broker:", e)
+        
+def reconnect_mqtt():
+    try:
+        mqtt.connect()
+        print("Reconnected to MQTT broker")
+    except Exception as e:
+        print("Error reconnecting to MQTT broker:", e)
 
 async def publish_behavior():
-    # waiting for find good distance for 3 sec
     while True:
+        start_time = time.time()
         while not is_something_block():
-            pass
+            await asyncio.sleep_ms(10)  # Sleep for 10 ms
         curr_time = time.time()
-        await asyncio.sleep(1.1)
-        if not is_something_block():
-            continue
-        mqtt.publish('daq2023/group4/behav', json.dumps({'status': 1}))
-        print('something is block')
+        await asyncio.sleep(5)
         while is_something_block():
-            pass
-
+            await asyncio.sleep_ms(10)  # Sleep for 10 ms
+        reconnect_mqtt()
         mqtt.publish('daq2023/group4/behav', json.dumps({'status': 0}))
         sensor_data = get_sensor_data()
         eat_time = time.time() - curr_time
@@ -70,11 +77,13 @@ async def publish_behavior():
         pm25 = get_pm()
         data_vis_payload = {'pm25': pm25, 'temp': temp, 'hum': hum, 'eating_time': eat_time}
         mqtt.publish('daq2023/group4/data_vis', json.dumps(data_vis_payload))
-        print('unblocked')
+        disconnect_mqtt()
+        print('Unblocked')
+        await asyncio.sleep_ms(10)
         
 async def publish_sensor_room_data():
     while True:
-        await asyncio.sleep(1.123456)
+        reconnect_mqtt()
         sensor_data = get_sensor_data()
         temp, hum = sensor_data
         sensor_room_data_payload = {
@@ -82,9 +91,10 @@ async def publish_sensor_room_data():
             "hum": hum,
             "pm25": get_pm()
             }
-        print('published data')
+        print('published data', sensor_room_data_payload)
         mqtt.publish('daq2023/group4/room_data', json.dumps(sensor_room_data_payload))
-
+        disconnect_mqtt()
+        await asyncio.sleep(3) # 30 min
 
 asyncio.create_task(publish_behavior())
 asyncio.create_task(publish_sensor_room_data())

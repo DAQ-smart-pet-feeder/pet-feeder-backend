@@ -43,6 +43,7 @@ try:
 except Exception as e:
     print(f"Error connecting to MQTT Broker: {e}")
 
+
 pool = PooledDB(creator=pymysql,
                 host=DB_HOST,
                 user=DB_USER,
@@ -50,6 +51,8 @@ pool = PooledDB(creator=pymysql,
                 database=DB_NAME,
                 maxconnections=2,
                 blocking=True)
+
+
 
 
 def get_sensor_room_data():
