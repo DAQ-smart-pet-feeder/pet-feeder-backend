@@ -35,7 +35,7 @@ paths:
                   $ref: '#/components/schemas/BehaviorData'
   /get-feeding-history:
     get:
-      summary: Returns a list of behavior data that contains id, timestamp and status.
+      summary: Returns a list of feeding history that contains id, timestamp and portion.
       operationId: controller.get_feeding_data
       responses:
         200:
