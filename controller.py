@@ -249,7 +249,7 @@ def get_room_data_for_visualization():
             SELECT DATE(ts), AVG(hum) AS hum_avg, MIN(temp) AS temp_min, 
             MAX(temp) AS temp_max, MIN(pm) AS pm_min, MAX(pm) AS pm_max 
             FROM sensorRoomData
-            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 6 DAY AND CURRENT_DATE()
+            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 7 DAY AND CURRENT_DATE()
             GROUP BY DATE(ts)
         """)
         result = [{
@@ -268,7 +268,7 @@ def get_tank_data_for_visualization():
         cs.execute("""
             SELECT DATE(ts), AVG(hum), MIN(temp) AS temp_min, MAX(temp) AS temp_max
             FROM sensorTankData
-            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 6 DAY AND CURRENT_DATE()
+            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 7 DAY AND CURRENT_DATE()
             GROUP BY DATE(ts)
         """)
         result = [
