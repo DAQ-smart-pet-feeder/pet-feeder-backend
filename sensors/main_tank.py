@@ -86,6 +86,7 @@ def quick_meal_callback(payload):
         print('payload received with value less than 0')
         return
     asyncio.create_task(feed_for(por))
+#     feed_for(por)
 
 
 def get_current_day():
@@ -140,7 +141,7 @@ mqtt.set_callback(sub_callback)
 mqtt.subscribe("daq2023/group4/quick_meal")
 mqtt.subscribe("daq2023/group4/meal_plan")
 
-def scheduler():
+async def scheduler():
     current_day = get_current_day()
     current_time = get_current_time()
 
@@ -150,7 +151,7 @@ def scheduler():
         print('current_day=', current_day, schedule['day'])
         if current_day in schedule['day'] and current_time == schedule['time']:
             print('yesssss')
-            feed_for(schedule['por'])
+            await feed_for(schedule['por'])
     
         
 mqtt.set_callback(sub_callback)
@@ -167,7 +168,7 @@ async def check_mqtt_msg():
         
 async def scheduleing():
     while True:
-        scheduler()
+        await scheduler()
         await asyncio.sleep(3)
 
 
