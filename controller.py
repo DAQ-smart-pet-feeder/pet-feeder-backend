@@ -38,10 +38,17 @@ client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 
 # Connect
-try:
-    client.connect(MQTT_BROKER, 1883, 60)  # You can specify the port if it's not the default
-except Exception as e:
-    print(f"Error connecting to MQTT Broker: {e}")
+def connect_mqtt():
+    try:
+        client.connect(MQTT_BROKER, 1883, 60)  # You can specify the port if it's not the default
+    except Exception as e:
+        print(f"Error connecting to MQTT Broker: {e}")
+
+def disconnect_mqtt():
+    try:
+        client.disconnect()
+    except Exception as e:
+        print(f"Error disconnecting to MQTT Broker: {e}")
 
 
 pool = PooledDB(creator=pymysql,
@@ -132,7 +139,9 @@ def post_portion_data():
         # Commit changes and close the database connection
             conn.commit()
         # Return success message or relevant data
+        connect_mqtt()
         client.publish('daq2023/group4/quick_meal', request_data['por'])
+        disconnect_mqtt()
         return {'message': 'Data inserted successfully'}, 201
 
     except Exception as e:
@@ -164,7 +173,6 @@ def post_meal_plan_data():
         with pool.connection() as conn, conn.cursor() as cs:
 
             input_data = request.get_json() 
-            print(1)
             transformed_data = []
 
             # Check if schedule_id already exists in the database
@@ -188,14 +196,15 @@ def post_meal_plan_data():
                         'enable_status': input_data['enable_status']
                     }
                 transformed_data.append(transformed_entry)
-                print(2)
                 # Execute the query for each transformed entry
                 for transformed_entry in transformed_data:
                     cs.execute(insert_query, (transformed_entry['schedule_id'], transformed_entry['days'], transformed_entry['por'], transformed_entry['time'], transformed_entry['enable_status']))
             # Commit changes after all queries have been executed
             conn.commit()
             meal_plan = json.dumps(get_meal_plan_data())
+            connect_mqtt()
             client.publish('daq2023/group4/meal_plan', meal_plan)
+            disconnect_mqtt()
 
             # Return success message or relevant data
             return {'message': 'Data inserted or updated successfully'}, 201
