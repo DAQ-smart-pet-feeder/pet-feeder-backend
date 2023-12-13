@@ -255,11 +255,11 @@ def get_env_data():
 def get_room_data_for_visualization():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-            SELECT DATE(ts), AVG(hum) AS hum_avg, MIN(temp) AS temp_min, 
-            MAX(temp) AS temp_max, MIN(pm) AS pm_min, MAX(pm) AS pm_max 
-            FROM sensorRoomData
-            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 7 DAY AND CURRENT_DATE()
-            GROUP BY DATE(ts)
+        SELECT DATE(ts), AVG(hum) AS hum_avg, MIN(temp) AS temp_min, 
+        MAX(temp) AS temp_max, MIN(pm) AS pm_min, MAX(pm) AS pm_max 
+        FROM sensorRoomData
+        WHERE DATE(ts) BETWEEN (SELECT MAX(DATE(ts)) - INTERVAL 7 DAY FROM sensorRoomData) AND (SELECT MAX(DATE(ts)) FROM sensorRoomData)
+        GROUP BY DATE(ts);
         """)
         result = [{
             "date": row[0],
@@ -275,10 +275,12 @@ def get_room_data_for_visualization():
 def get_tank_data_for_visualization():
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-            SELECT DATE(ts), AVG(hum), MIN(temp) AS temp_min, MAX(temp) AS temp_max
-            FROM sensorTankData
-            WHERE DATE(ts) BETWEEN CURRENT_DATE() - INTERVAL 7 DAY AND CURRENT_DATE()
-            GROUP BY DATE(ts)
+        SELECT DATE(ts), AVG(hum) AS hum_avg, MIN(temp) AS temp_min, 
+        MAX(temp) AS temp_max
+        FROM sensorTankData
+        WHERE DATE(ts) BETWEEN (SELECT MAX(DATE(ts)) - INTERVAL 7 DAY FROM sensorTankData) AND (SELECT MAX(DATE(ts)) FROM sensorTankData)
+        GROUP BY DATE(ts);
+
         """)
         result = [
             {
